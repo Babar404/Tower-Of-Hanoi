@@ -1,3 +1,9 @@
+#########################################################################
+########################################################################
+#######################################################################
+
+# The code begins from here
+
 .data
     prompt: .asciiz "Enter the number of disks "
     movee:  .asciiz "\n move disk from "
@@ -6,34 +12,36 @@
 .ent main
 .globl main
 main:
-    #use se input ley  rha hoon yahan 
+    #taking input from the user
     li $v0 , 4  
     la $a0 , prompt
     syscall
-
+    #storing that input into a reg $a0
     li $v0 , 5
     syscall
-    add $a0 , $v0 , $0   #user ka diya huwa input $a0 me store kar liya hai
+    add $a0 , $v0 , $0 
 
-    addi	$a1, $0, 1   #temp value store karai hai
-    addi	$a2, $0, 3   #temp value store karai hai
-    addi	$a3, $0, 2  #temp value store karai hai
+    addi	$a1, $0, 1   #temp value store to be stored
+    addi	$a2, $0, 3   #temp value store to be stored
+    addi	$a3, $0, 2  #temp value store  to be stored
 
     jal		hanoi				# jump to hanoi and save position to $ra
 
     jr		$ra					# jump to $ra
     
-
+################################################################################
+##########################################################################
+###########################################################################
 hanoi:
-    addi $t0 , $a0 , 0    #use ka input ab a0 se t0 me agaya hai
+    addi $t0 , $a0 , 0    #user's input has been placed from $a0 to $t0
     addi $t1 , $0 , 1
-    bne $a0 , $t1 , target    #agar user 1 enter karta hai tou disk ek dafa hi move hogi aur wo else k portion me jaega hi nahi
+    bne $a0 , $t1 , target    #if user enters 1 then then will not go into else part
     li $v0 , 4  
-    la $a0 , movee           #move ki statement print kar rhay hain 
+    la $a0 , movee           #printing the statement of move
     syscall
 
     li $v0 , 1
-    move $a0 , $a1     #ab 1 print hojaega
+    move $a0 , $a1     #printing 1
     syscall
 
     li $v0, 4			# print to
@@ -41,38 +49,42 @@ hanoi:
     syscall
 
     li $v0 , 1
-    move $a0, $a2   #user ne 1 enter kia tha tou wo disk 1 dafa hi move hogi
+    move $a0, $a2   #user had entered 1 so the disk has moved only once
 
-    addi $a0 , $t0, 0    # a0 ko wapis restore kara dia maine
+    addi $a0 , $t0, 0    #restoring the value of $a0
 
+##################################################################################
+###################################################################################
+##########################################################################
 
+else:           #now the else part starts if the user has entered more than 1 value as input
 
-else:           #ab yahan se azaab shuru hoga agar user 1 se zyada disk deta hai tou
+    addi $sp , $sp , -20    # emptying the stack now 
 
-    addi $sp , $sp , -20    # stack me maine jagah banai hai 
-
-    #ab stack me ra reg ka address aur phir a0,a1,a2 ki value ko store karata hoon
-    sw	$ra, 16($sp)	# yahan tw address agaya	 
-    sw	$a3, 12($sp)	#yahan last disk agai
-    sw	$a2, 8($sp)		 # yahan middle disk agai
-    sw	$a1, 4($sp)		  # yahan first disk agai  
-    sw	$a0, 0($sp)		# user ki enter ki hui disk ka number agaya
+    sw	$ra, 16($sp)	# address of $ra reg	 
+    sw	$a3, 12($sp)	#here comes the last disk that is C
+    sw	$a2, 8($sp)		 # here comes the middle disk that is B
+    sw	$a1, 4($sp)		  # here comes the first disk that is A 
+    sw	$a0, 0($sp)		# the number of disks user has entered
     
 
     #now setting up the recursive call 
 
-    addi $t3, $a3, 0		#copy value  into temp
+    addi $t3, $a3, 0		#copy value  into temp reg
     addi $a3, $a2, 0		#B = C
     addi $a2, $t3, 0		#C = B
-    addi $a0, $a0, -1		#num of disk me ek ka decreament kar rhay hain   		
+    addi $a0, $a0, -1		#num of disk decreament by 1  		
     #recursive call
-    jal hanoi      # ab ye yahan se wapis hanoi k func par chala jaega
+    jal hanoi      # now from here it will go to the hanoi function
 
+#########################################################
+#####################################################
+#######################################################
 
-    #ab stack ko load karwa rhay hain 
+    #loading the stack now
     	lw $ra, 16($sp)
     	lw $a3, 12($sp)		#load a3(which is B)
-    	lw $a2, 8($sp)		#load a2(which is c)
+    	lw $a2, 8($sp)		#load a2(which is C)
     	lw $a1, 4($sp)		#load a1(which is A)
     	lw $a0, 0($sp)		#load a0(num_of_disks)
 
@@ -94,12 +106,16 @@ else:           #ab yahan se azaab shuru hoga agar user 1 se zyada disk deta hai
     	syscall
     	addi $a0, $t0, 0		# restore $a0
 
+#######################################
+######################################
+########################################
+
 
         #setTING args for subsequent recursive call
     		addi $t3, $a3, 0		#copy var into temp
     		addi $a3, $a1, 0		#B = A
     		addi $a1, $t3, 0		#A = B
-    		addi $a0, $a0, -1		#num of disk ME decreament
+    		addi $a0, $a0, -1		#num of disk decreament
 
             jal hanoi
 
@@ -113,3 +129,8 @@ else:           #ab yahan se azaab shuru hoga agar user 1 se zyada disk deta hai
     #return
     	add $v0, $zero, $t5
     	jr $ra    
+
+#########################################################
+#########################################################
+########################################################
+#########################################################
