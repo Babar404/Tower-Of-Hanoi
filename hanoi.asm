@@ -1,13 +1,11 @@
-#########################################################################
-########################################################################
-#######################################################################
+#<---------------------------------------------------------------------------------------------------------------------------------->
 
 # The code begins from here
 
 .data
     prompt: .asciiz "Enter the number of disks "
     movee:  .asciiz "\n move disk from "
-    to: .asciiz "To" 
+    to: .asciiz " To " 
 .text
 .ent main
 .globl main
@@ -21,21 +19,21 @@ main:
     syscall
     add $a0 , $v0 , $0 
 
-    addi	$a1, $0, 1   #temp value store to be stored
-    addi	$a2, $0, 3   #temp value store to be stored
-    addi	$a3, $0, 2  #temp value store  to be stored
+    addi	$a1, $0, 1   #storing temp values
+    addi	$a2, $0, 3   #storing temp values
+    addi	$a3, $0, 2  #storing temp values
 
     jal		hanoi				# jump to hanoi and save position to $ra
 
-    jr		$ra					# jump to $ra
+    li $v0,10
+    syscall					# jump to $ra
     
-################################################################################
-##########################################################################
-###########################################################################
+#<------------------------------------------------------------------------------------------------------------------------------------>
+
 hanoi:
     addi $t0 , $a0 , 0    #user's input has been placed from $a0 to $t0
     addi $t1 , $0 , 1
-    bne $a0 , $t1 , target    #if user enters 1 then then will not go into else part
+    bne $a0 , $t1 , else    #if user enters 1 then then will not go into else part
     li $v0 , 4  
     la $a0 , movee           #printing the statement of move
     syscall
@@ -50,12 +48,11 @@ hanoi:
 
     li $v0 , 1
     move $a0, $a2   #user had entered 1 so the disk has moved only once
-
+    syscall
     addi $a0 , $t0, 0    #restoring the value of $a0
-
-##################################################################################
-###################################################################################
-##########################################################################
+    
+    jr $ra
+#<---------------------------------------------------------------------------------------------------------------------------------->
 
 else:           #now the else part starts if the user has entered more than 1 value as input
 
@@ -77,9 +74,7 @@ else:           #now the else part starts if the user has entered more than 1 va
     #recursive call
     jal hanoi      # now from here it will go to the hanoi function
 
-#########################################################
-#####################################################
-#######################################################
+#<---------------------------------------------------------------------------------------------------------------------------------->
 
     #loading the stack now
     	lw $ra, 16($sp)
@@ -93,22 +88,20 @@ else:           #now the else part starts if the user has entered more than 1 va
     	addi $t0, $a0, 0		# temp save $a0
     	addi $t1, $zero, 1
     	li $v0, 4			# print move
-    	la $a0, Move
+    	la $a0, movee
     	syscall
     	li $v0, 1 			# print A
     	move $a0, $a1
     	syscall
     	li $v0, 4			# print to
-    	la $a0, To
+    	la $a0, to
     	syscall
     	li $v0, 1 			# print C
     	move $a0, $a2
     	syscall
     	addi $a0, $t0, 0		# restore $a0
 
-#######################################
-######################################
-########################################
+#<---------------------------------------------------------------------------------------------------------------------------------->
 
 
         #setTING args for subsequent recursive call
@@ -130,7 +123,4 @@ else:           #now the else part starts if the user has entered more than 1 va
     	add $v0, $zero, $t5
     	jr $ra    
 
-#########################################################
-#########################################################
-########################################################
-#########################################################
+#<-----------------------------------------------------THE END----------------------------------------------------------------------->
